@@ -1,17 +1,16 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
-// Bogie Class (Custom Object)
+// Bogie Class
 class Bogie {
     String name;
     int capacity;
 
-    // Constructor
     Bogie(String name, int capacity) {
         this.name = name;
         this.capacity = capacity;
     }
 
-    // Display method
     void display() {
         System.out.println(name + " -> Capacity: " + capacity);
     }
@@ -24,7 +23,7 @@ public class TrainConsistManagementApp {
         // Welcome Message
         System.out.println("=== Train Consist Management App ===");
 
-        // === UC6: HashMap (Bogie → Capacity Mapping) ===
+        // === UC6: HashMap ===
         HashMap<String, Integer> bogieCapacityMap = new HashMap<>();
 
         bogieCapacityMap.put("Sleeper", 72);
@@ -32,28 +31,34 @@ public class TrainConsistManagementApp {
         bogieCapacityMap.put("First Class", 24);
 
         System.out.println("\nBogie Capacity Details (HashMap):");
-
         for (Map.Entry<String, Integer> entry : bogieCapacityMap.entrySet()) {
             System.out.println(entry.getKey() + " -> Capacity: " + entry.getValue());
         }
 
-        // === UC7: Sorting Bogies using Comparator ===
-
-        // Create List of Bogie objects
+        // === UC7: Sorting ===
         List<Bogie> bogieList = new ArrayList<>();
 
-        // Add bogies
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 78));
         bogieList.add(new Bogie("First Class", 24));
 
-        // Sort using Comparator (by capacity)
         bogieList.sort(Comparator.comparingInt(b -> b.capacity));
 
-        // Display sorted bogies
         System.out.println("\nSorted Bogies by Capacity:");
-
         for (Bogie b : bogieList) {
+            b.display();
+        }
+
+        // === UC8: Stream Filtering ===
+
+        // Filter bogies with capacity > 60
+        List<Bogie> filteredBogies = bogieList.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
+
+        // Display filtered bogies
+        System.out.println("\nFiltered Bogies (Capacity > 60):");
+        for (Bogie b : filteredBogies) {
             b.display();
         }
 
