@@ -1,28 +1,63 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
-// Custom Exception Class
+// ================= Custom Checked Exception =================
 class InvalidCapacityException extends Exception {
     public InvalidCapacityException(String message) {
         super(message);
     }
 }
 
-// Bogie Class
+// ================= Custom Runtime Exception =================
+class CargoSafetyException extends RuntimeException {
+    public CargoSafetyException(String message) {
+        super(message);
+    }
+}
+
+// ================= Bogie Class =================
 class Bogie {
     String name;
     int capacity;
+    String shape; // RECTANGULAR / CYLINDRICAL
+    String cargo; // Assigned cargo
 
-    Bogie(String name, int capacity) throws InvalidCapacityException {
-        // Fail-Fast Validation
+    Bogie(String name, int capacity, String shape) throws InvalidCapacityException {
         if (capacity <= 0) {
             throw new InvalidCapacityException("Invalid capacity for bogie: " + name);
         }
         this.name = name;
         this.capacity = capacity;
+        this.shape = shape;
+    }
+
+    // ================= Cargo Assignment =================
+    void assignCargo(String cargoType) {
+        try {
+            System.out.println("\nAssigning cargo: " + cargoType + " to " + name);
+
+            // Safety Rule
+            if (cargoType.equalsIgnoreCase("Petroleum") &&
+                    shape.equalsIgnoreCase("Rectangular")) {
+
+                throw new CargoSafetyException(
+                        "Unsafe cargo! Petroleum cannot be loaded in Rectangular bogie: " + name
+                );
+            }
+
+            this.cargo = cargoType;
+            System.out.println("Cargo assigned successfully ✅");
+
+        } catch (CargoSafetyException e) {
+            System.out.println("ERROR: " + e.getMessage());
+
+        } finally {
+            System.out.println("Logging: Cargo assignment attempted for " + name);
+        }
     }
 }
 
+// ================= Main Application =================
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
@@ -32,21 +67,23 @@ public class TrainConsistManagementApp {
         List<Bogie> bogieList = new ArrayList<>();
 
         // Creating dataset safely
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
-                bogieList.add(new Bogie("Sleeper", 72));
-                bogieList.add(new Bogie("AC Chair", 78));
-                bogieList.add(new Bogie("First Class", 24));
-
-                // Example invalid case (uncomment to test)
-                // bogieList.add(new Bogie("Invalid", 0));
+                bogieList.add(new Bogie("Sleeper", 72, "Rectangular"));
+                bogieList.add(new Bogie("Tanker", 50, "Cylindrical"));
+                bogieList.add(new Bogie("AC Chair", 78, "Rectangular"));
 
             } catch (InvalidCapacityException e) {
                 System.out.println("Error: " + e.getMessage());
             }
         }
 
-        // === Loop-Based Filtering ===
+        // ================= Cargo Assignment Demo =================
+        for (Bogie b : bogieList) {
+            b.assignCargo("Petroleum"); // will fail for rectangular
+        }
+
+        // ================= Performance Comparison =================
         long startLoop = System.nanoTime();
 
         List<Bogie> loopFiltered = new ArrayList<>();
@@ -57,9 +94,7 @@ public class TrainConsistManagementApp {
         }
 
         long endLoop = System.nanoTime();
-        long loopTime = endLoop - startLoop;
 
-        // === Stream-Based Filtering ===
         long startStream = System.nanoTime();
 
         List<Bogie> streamFiltered = bogieList.stream()
@@ -67,19 +102,11 @@ public class TrainConsistManagementApp {
                 .collect(Collectors.toList());
 
         long endStream = System.nanoTime();
-        long streamTime = endStream - startStream;
 
-        // === Results ===
         System.out.println("\nPerformance Comparison:");
-        System.out.println("Loop Filtering Time   : " + loopTime + " ns");
-        System.out.println("Stream Filtering Time : " + streamTime + " ns");
+        System.out.println("Loop Time   : " + (endLoop - startLoop) + " ns");
+        System.out.println("Stream Time : " + (endStream - startStream) + " ns");
 
-        if (loopTime < streamTime) {
-            System.out.println("Loop is faster in this run ⚡");
-        } else {
-            System.out.println("Stream is faster in this run ⚡");
-        }
-
-        System.out.println("\nProgram completed safely.");
+        System.out.println("\nProgram completed safely 🚆");
     }
 }
