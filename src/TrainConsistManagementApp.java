@@ -49,17 +49,35 @@ public class TrainConsistManagementApp {
             b.display();
         }
 
-        // === UC8: Stream Filtering ===
-
-        // Filter bogies with capacity > 60
+        // === UC8: Filtering ===
         List<Bogie> filteredBogies = bogieList.stream()
                 .filter(b -> b.capacity > 60)
                 .collect(Collectors.toList());
 
-        // Display filtered bogies
         System.out.println("\nFiltered Bogies (Capacity > 60):");
         for (Bogie b : filteredBogies) {
             b.display();
+        }
+
+        // === UC9: Grouping ===
+
+        // Group bogies based on category (capacity-based grouping)
+        Map<String, List<Bogie>> groupedBogies = bogieList.stream()
+                .collect(Collectors.groupingBy(b -> {
+                    if (b.capacity >= 70) return "High Capacity";
+                    else if (b.capacity >= 50) return "Medium Capacity";
+                    else return "Low Capacity";
+                }));
+
+        // Display grouped bogies
+        System.out.println("\nGrouped Bogies by Capacity Category:");
+
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nCategory: " + entry.getKey());
+
+            for (Bogie b : entry.getValue()) {
+                b.display();
+            }
         }
 
         // Program continues...
