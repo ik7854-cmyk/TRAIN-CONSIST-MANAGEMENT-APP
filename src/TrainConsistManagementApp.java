@@ -1,12 +1,23 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
+// Custom Exception Class
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
 // Bogie Class
 class Bogie {
     String name;
     int capacity;
 
-    Bogie(String name, int capacity) {
+    Bogie(String name, int capacity) throws InvalidCapacityException {
+        // Fail-Fast Validation
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Invalid capacity for bogie: " + name);
+        }
         this.name = name;
         this.capacity = capacity;
     }
@@ -18,13 +29,21 @@ public class TrainConsistManagementApp {
 
         System.out.println("=== Train Consist Management App ===");
 
-        // Create a large dataset for meaningful comparison
         List<Bogie> bogieList = new ArrayList<>();
 
+        // Creating dataset safely
         for (int i = 0; i < 100000; i++) {
-            bogieList.add(new Bogie("Sleeper", 72));
-            bogieList.add(new Bogie("AC Chair", 78));
-            bogieList.add(new Bogie("First Class", 24));
+            try {
+                bogieList.add(new Bogie("Sleeper", 72));
+                bogieList.add(new Bogie("AC Chair", 78));
+                bogieList.add(new Bogie("First Class", 24));
+
+                // Example invalid case (uncomment to test)
+                // bogieList.add(new Bogie("Invalid", 0));
+
+            } catch (InvalidCapacityException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
 
         // === Loop-Based Filtering ===
@@ -55,13 +74,12 @@ public class TrainConsistManagementApp {
         System.out.println("Loop Filtering Time   : " + loopTime + " ns");
         System.out.println("Stream Filtering Time : " + streamTime + " ns");
 
-        // Optional comparison insight
         if (loopTime < streamTime) {
             System.out.println("Loop is faster in this run ⚡");
         } else {
             System.out.println("Stream is faster in this run ⚡");
         }
 
-        // Program continues...
+        System.out.println("\nProgram completed safely.");
     }
 }
