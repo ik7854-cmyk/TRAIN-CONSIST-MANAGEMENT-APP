@@ -1,112 +1,47 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
-// ================= Custom Checked Exception =================
-class InvalidCapacityException extends Exception {
-    public InvalidCapacityException(String message) {
-        super(message);
-    }
-}
-
-// ================= Custom Runtime Exception =================
-class CargoSafetyException extends RuntimeException {
-    public CargoSafetyException(String message) {
-        super(message);
-    }
-}
-
-// ================= Bogie Class =================
-class Bogie {
-    String name;
-    int capacity;
-    String shape; // RECTANGULAR / CYLINDRICAL
-    String cargo; // Assigned cargo
-
-    Bogie(String name, int capacity, String shape) throws InvalidCapacityException {
-        if (capacity <= 0) {
-            throw new InvalidCapacityException("Invalid capacity for bogie: " + name);
-        }
-        this.name = name;
-        this.capacity = capacity;
-        this.shape = shape;
-    }
-
-    // ================= Cargo Assignment =================
-    void assignCargo(String cargoType) {
-        try {
-            System.out.println("\nAssigning cargo: " + cargoType + " to " + name);
-
-            // Safety Rule
-            if (cargoType.equalsIgnoreCase("Petroleum") &&
-                    shape.equalsIgnoreCase("Rectangular")) {
-
-                throw new CargoSafetyException(
-                        "Unsafe cargo! Petroleum cannot be loaded in Rectangular bogie: " + name
-                );
-            }
-
-            this.cargo = cargoType;
-            System.out.println("Cargo assigned successfully ✅");
-
-        } catch (CargoSafetyException e) {
-            System.out.println("ERROR: " + e.getMessage());
-
-        } finally {
-            System.out.println("Logging: Cargo assignment attempted for " + name);
-        }
-    }
-}
-
-// ================= Main Application =================
 public class TrainConsistManagementApp {
 
+    // ================= Bubble Sort Method =================
+    public static void bubbleSort(int[] capacities) {
+
+        int n = capacities.length;
+
+        // Outer loop → number of passes
+        for (int i = 0; i < n - 1; i++) {
+
+            // Inner loop → compare adjacent elements
+            for (int j = 0; j < n - i - 1; j++) {
+
+                // If current element > next element → swap
+                if (capacities[j] > capacities[j + 1]) {
+
+                    // Swapping logic
+                    int temp = capacities[j];
+                    capacities[j] = capacities[j + 1];
+                    capacities[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    // ================= Main Method =================
     public static void main(String[] args) {
 
-        System.out.println("=== Train Consist Management App ===");
+        System.out.println("=== Passenger Bogie Capacity Sorting (Bubble Sort) ===");
 
-        List<Bogie> bogieList = new ArrayList<>();
+        // Sample passenger bogie capacities
+        int[] capacities = {72, 50, 78, 24, 60, 90, 45};
 
-        // Creating dataset safely
-        for (int i = 0; i < 5; i++) {
-            try {
-                bogieList.add(new Bogie("Sleeper", 72, "Rectangular"));
-                bogieList.add(new Bogie("Tanker", 50, "Cylindrical"));
-                bogieList.add(new Bogie("AC Chair", 78, "Rectangular"));
+        System.out.println("Before Sorting:");
+        System.out.println(Arrays.toString(capacities));
 
-            } catch (InvalidCapacityException e) {
-                System.out.println("Error: " + e.getMessage());
-            }
-        }
+        // Call Bubble Sort
+        bubbleSort(capacities);
 
-        // ================= Cargo Assignment Demo =================
-        for (Bogie b : bogieList) {
-            b.assignCargo("Petroleum"); // will fail for rectangular
-        }
+        System.out.println("\nAfter Sorting:");
+        System.out.println(Arrays.toString(capacities));
 
-        // ================= Performance Comparison =================
-        long startLoop = System.nanoTime();
-
-        List<Bogie> loopFiltered = new ArrayList<>();
-        for (Bogie b : bogieList) {
-            if (b.capacity > 60) {
-                loopFiltered.add(b);
-            }
-        }
-
-        long endLoop = System.nanoTime();
-
-        long startStream = System.nanoTime();
-
-        List<Bogie> streamFiltered = bogieList.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        long endStream = System.nanoTime();
-
-        System.out.println("\nPerformance Comparison:");
-        System.out.println("Loop Time   : " + (endLoop - startLoop) + " ns");
-        System.out.println("Stream Time : " + (endStream - startStream) + " ns");
-
-        System.out.println("\nProgram completed safely 🚆");
+        System.out.println("\nProgram completed successfully 🚆");
     }
 }
