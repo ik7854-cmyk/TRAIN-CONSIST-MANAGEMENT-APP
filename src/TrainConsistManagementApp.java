@@ -5,6 +5,13 @@ public class TrainConsistManagementApp {
     // ================= Binary Search Method =================
     public static int binarySearch(String[] bogieIds, String key) {
 
+
+        if (bogieIds == null || bogieIds.length == 0) {
+            throw new IllegalStateException(
+                    " Cannot perform search: No bogies available in the train."
+            );
+        }
+
         int low = 0;
         int high = bogieIds.length - 1;
 
@@ -33,7 +40,7 @@ public class TrainConsistManagementApp {
 
         System.out.println("=== Bogie ID Search (Binary Search) ===");
 
-        // MUST be sorted
+
         String[] bogieIds = {
                 "BG102", "BG120", "BG210", "BG305", "BG450", "BG999"
         };
@@ -45,17 +52,22 @@ public class TrainConsistManagementApp {
         System.out.print("\nEnter Bogie ID to search: ");
         String key = sc.nextLine();
 
-        // Perform search
-        int result = binarySearch(bogieIds, key);
+        try {
 
-        // Display result
-        if (result != -1) {
-            System.out.println("✅ Bogie found at index: " + result);
-        } else {
-            System.out.println("❌ Bogie ID not found.");
+            int result = binarySearch(bogieIds, key);
+
+            if (result != -1) {
+                System.out.println("Bogie found at index: " + result);
+            } else {
+                System.out.println(" Bogie ID not found.");
+            }
+
+        } catch (IllegalStateException e) {
+
+            System.out.println(e.getMessage());
         }
 
-        System.out.println("\nProgram continues safely 🚆");
+        System.out.println("\nProgram ends safely ");
 
         sc.close();
     }
