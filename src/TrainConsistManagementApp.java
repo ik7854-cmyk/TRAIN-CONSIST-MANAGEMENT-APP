@@ -2,30 +2,51 @@ import java.util.*;
 
 public class TrainConsistManagementApp {
 
+    // ================= Linear Search Method =================
+    public static int linearSearch(String[] bogieIds, String key) {
+
+        for (int i = 0; i < bogieIds.length; i++) {
+
+            // Safe string comparison
+            if (bogieIds[i].equals(key)) {
+                return i; // match found → return index
+            }
+        }
+
+        return -1; // not found
+    }
+
+    // ================= Main Method =================
     public static void main(String[] args) {
 
-        System.out.println("=== Bogie Type Sorting (Arrays.sort) ===");
+        Scanner sc = new Scanner(System.in);
 
-        // Array of bogie type names
-        String[] bogieTypes = {
-                "Sleeper",
-                "AC Chair",
-                "First Class",
-                "General",
-                "Tanker",
-                "Luxury",
-                "Metro"
+        System.out.println("=== Bogie ID Search (Linear Search) ===");
+
+        // Unsorted array of bogie IDs
+        String[] bogieIds = {
+                "BG102", "BG305", "BG210", "BG450", "BG120", "BG999"
         };
 
-        System.out.println("Before Sorting:");
-        System.out.println(Arrays.toString(bogieTypes));
+        System.out.println("Available Bogie IDs:");
+        System.out.println(Arrays.toString(bogieIds));
 
-        // Built-in sorting
-        Arrays.sort(bogieTypes);
+        // User input
+        System.out.print("\nEnter Bogie ID to search: ");
+        String searchKey = sc.nextLine();
 
-        System.out.println("\nAfter Sorting (Alphabetical):");
-        System.out.println(Arrays.toString(bogieTypes));
+        // Perform search
+        int resultIndex = linearSearch(bogieIds, searchKey);
 
-        System.out.println("\nProgram completed successfully 🚆");
+        // Display result
+        if (resultIndex != -1) {
+            System.out.println("✅ Bogie found at position: " + resultIndex);
+        } else {
+            System.out.println("❌ Bogie ID not found.");
+        }
+
+        System.out.println("\nProgram continues safely 🚆");
+
+        sc.close();
     }
 }
